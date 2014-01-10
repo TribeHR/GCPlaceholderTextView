@@ -12,8 +12,8 @@
 
 @property (unsafe_unretained, nonatomic, readonly) NSString* realText;
 
-- (void) beginEditing:(NSNotification*) notification;
-- (void) endEditing:(NSNotification*) notification;
+- (void) editingDidBegin:(NSNotification*) notification;
+- (void) editingDidEnd:(NSNotification*) notification;
 
 @end
 
@@ -34,8 +34,8 @@
 }
 
 - (void)awakeFromNib {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(beginEditing:) name:UITextViewTextDidBeginEditingNotification object:self];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endEditing:) name:UITextViewTextDidEndEditingNotification object:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(editingDidBegin:) name:UITextViewTextDidBeginEditingNotification object:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(editingDidEnd:) name:UITextViewTextDidEndEditingNotification object:self];
     
     self.realTextColor = self.textColor;
     self.placeholderColor = [UIColor lightGrayColor];
@@ -53,7 +53,7 @@
     }
     
     
-    [self endEditing:nil];
+    [self editingDidEnd:nil];
 }
 
 - (void)setPlaceholderColor:(UIColor *)aPlaceholderColor {
@@ -90,14 +90,14 @@
     return [super text];
 }
 
-- (void) beginEditing:(NSNotification*) notification {
+- (void) editingDidBegin:(NSNotification*) notification {
     if ([self.realText isEqualToString:self.placeholder]) {
         super.text = nil;
         self.textColor = self.realTextColor;
     }
 }
 
-- (void) endEditing:(NSNotification*) notification {
+- (void) editingDidEnd:(NSNotification*) notification {
     if ([self.realText isEqualToString:@""] || self.realText == nil) {
         super.text = self.placeholder;
         self.textColor = self.placeholderColor;
